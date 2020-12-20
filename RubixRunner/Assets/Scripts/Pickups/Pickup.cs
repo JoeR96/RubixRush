@@ -8,8 +8,8 @@ using UnityEngine.UI;
 public abstract class Pickup : MonoBehaviour
 {
     protected PoolObjectType type;
-    protected ObjectSpawner spawner;
-    ScoreSystem scoreSystem;
+    protected GameManager spawner;
+    protected ScoreSystem scoreSystem;
     [SerializeField] protected AudioClip clip;
     protected Player player;
     protected float start;
@@ -18,7 +18,7 @@ public abstract class Pickup : MonoBehaviour
 
     protected virtual void Awake()
     {
-        spawner = GameObject.FindGameObjectWithTag("GameManager").GetComponent<ObjectSpawner>();
+        spawner = GameObject.FindGameObjectWithTag("GameManager").GetComponent<GameManager>();
         scoreSystem = GameObject.FindGameObjectWithTag("GameManager").GetComponent<ScoreSystem>();
         player = FindObjectOfType<Player>();
     }
@@ -45,8 +45,12 @@ public abstract class Pickup : MonoBehaviour
         {
             player.PlayAudio(clip);
             ApplyEffect();
-            ReturnToPool();
+            StartCoroutine(LerpGameObjectPosition(gameObject, player.transform.position, 5f));
             ScoreFunction();
+        }
+        if (other.gameObject.CompareTag("EndOfLine"))
+        {
+            ReturnToPool();
         }
     }
 
@@ -57,11 +61,23 @@ public abstract class Pickup : MonoBehaviour
     }
     
 
-    private void OnCollisionEnter(Collision other)
+ 
+
+    public IEnumerator LerpGameObjectPosition(GameObject toLerp, Vector3 target, float rate)
     {
-        if (other.gameObject.CompareTag("EndOfLine"))
-        {
-            Destroy(gameObject);
+        float time = 1f;
+        float i = 0;
+        float r = rate / time;
+        var start = toLerp.transform.position;
+        while (i < 1)
+        { 
+            i += Time.deltaTime * rate;
+            toLerp.transform.position = Vector3.Lerp(start, target, i);
+            //transform.rotation = Quaternion.RotateTowards(start, target, i);
+            yield return null;
         }
+        ReturnToPool();
+        
     }
+    
 }

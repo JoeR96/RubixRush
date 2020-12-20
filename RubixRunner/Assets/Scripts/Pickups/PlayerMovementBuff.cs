@@ -12,7 +12,7 @@ namespace Pickups
 
         protected override void ApplyEffect()
         {
-            spawner.SpawnerSpeedDown();
+            
         }
     }
 }

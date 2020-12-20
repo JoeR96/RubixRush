@@ -19,7 +19,7 @@ public class RotationManager : MonoBehaviour
         if (isRotating == false)
         {
             RotationAudio.Play();
-            StartCoroutine(nameof(Rotate), targetRotation);
+            StartCoroutine(RotateGameObject(targetRotation, gameObject.transform, 0.2f));
         }
     }
 
@@ -30,27 +30,27 @@ public class RotationManager : MonoBehaviour
         if (isRotating == false)
         {
             RotationAudio.Play();
-            StartCoroutine(nameof(Rotate), targetRotation);
+            StartCoroutine(RotateGameObject(targetRotation, gameObject.transform, 0.2f));
         }
     }
 
-    public IEnumerator Rotater(Quaternion target)
-    {
-        isRotating = false;
-        float time = 1f;
-        float i = 0;
-        float rate = 360f / time;
-        var start = transform.rotation;
-        while (i < 180)
-        {
-            isRotating = true;
-            i += Time.deltaTime * rate;
-
-            transform.rotation = Quaternion.RotateTowards(start, target, i);
-            yield return null;
-        }
-        isRotating = false;
-    }
+    // public IEnumerator Rotater(Quaternion target)
+    // {
+    //     isRotating = false;
+    //     float time = 1f;
+    //     float i = 0;
+    //     float rate = 360f / time;
+    //     var start = transform.rotation;
+    //     while (i < 180)
+    //     {
+    //         isRotating = true;
+    //         i += Time.deltaTime * rate;
+    //
+    //         transform.rotation = Quaternion.RotateTowards(start, target, i);
+    //         yield return null;
+    //     }
+    //     isRotating = false;
+    // }
 
     public IEnumerator Rotate(Quaternion target)
     {

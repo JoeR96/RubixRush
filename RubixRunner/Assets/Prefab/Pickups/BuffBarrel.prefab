@@ -13,7 +13,6 @@ GameObject:
   - component: {fileID: 7071949623590238110}
   - component: {fileID: 8455801688038879807}
   - component: {fileID: 1923585019993728207}
-  - component: {fileID: -5953710092059925651}
   m_Layer: 0
   m_Name: BuffBarrel
   m_TagString: Untagged
@@ -110,16 +109,3 @@ BoxCollider:
   serializedVersion: 2
   m_Size: {x: 0.53363955, y: 0.6798812, z: 0.46214545}
   m_Center: {x: -0.000000014901161, y: 0.3399405, z: 0}
---- !u!114 &-5953710092059925651
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 7095042246236773448}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: aa065667310fbff4c94520d17f577307, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  PoolType: 10

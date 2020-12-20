@@ -1,26 +1,48 @@
-﻿using System.Collections;
+﻿using System;
+using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
+using TMPro;
 using UnityEngine;
+using UnityEngine.UI;
 
 public class ObjectSpawner : MonoBehaviour
 {
-    //if time put gamemanager on scriptable object can also save menu stats 
+    [SerializeField] private DataScriptableObject _data;
+    [SerializeField] private GameObject spawner;
+    
     Queue<GameObject> floorSpawners = new Queue<GameObject>();
     private float offset = 18;
     private float x;
-    private float tutorialCounter;
-
+    private float _tutorialCounter;
+    private bool startLoop;
     public float MoveCount = 0; // Start is called before the first frame update
     
     private float timer;
+
+    
+    
+    //how many in game tiles we have ran along
+    private float distanceTravelled;
+    
+    //track how long the distance popup has been active so we can deactivate it 
+    private float distanceTimer;
+    private float distanceDuration = 2.5f;
     private float colourDuration;
-    void Start()
+
+    
+
+
+    private void Start()
     {
+        //distancePopupActive = false;
+        startLoop = true;
         for (int i = 0; i < 8; i++)
         {
             SpawnHolder();    
         }
+
+        startLoop = false;
     }
 
     private void Awake()
@@ -35,12 +57,36 @@ public class ObjectSpawner : MonoBehaviour
         {
             timer -= Time.deltaTime;
         }
-        if (Input.GetKey(KeyCode.J))
-        {
-            StartCoroutine(LerpVariable(6f));
-        }
+
+        
+        // if (distancePopupActive && distanceTimer < distanceDuration)
+        // {
+        //     distanceTimer += Time.deltaTime;
+        //         if (Math.Abs(distanceTimer - distanceDuration) < 0.1)
+        //         {
+        //             //move this out of the update function
+        //             //distanceButton.gameObject.SetActive(false);
+        //             distanceTimer = 0f;
+        //             //distancePopupActive = false;
+        //         }
+        // }
+        
+    }
+
+    //run this method every X distance and update the variables to coincide 
+    private void ShowDistanceText(float distanceTravelled)
+    {
+        //distancePopupActive = true;
+        //var t = distanceButton.gameObject.GetComponent<Image>();
+        //d/istanceText.SetText(distanceTravelled.ToString());
+        //distanceButton.gameObject.SetActive(true);
     }
     
+    public bool IsDivisible(float x)
+    {
+        //will return true if x is divisible by 10 - increase later after testing 
+        return (x % 10) == 0;
+    }
     public IEnumerator LerpVariable(float target)
     {
         var m_rotateTime = 1;
@@ -55,30 +101,44 @@ public class ObjectSpawner : MonoBehaviour
             MoveCount = 1;
         }
     }
-    private void SpawnHolder()
+    public void SpawnHolder()
     {
-        var holder = ObjectPooler.instance.GetObject(PoolObjectType.FLOORMASTER);
+        distanceTravelled += 1;
+        if (IsDivisible(distanceTravelled))
+        {
+            ShowDistanceText(distanceTravelled);
+        } 
+        var holder = Instantiate(spawner);
         holder.transform.parent = gameObject.transform;
-        holder.transform.position = new Vector3(0f, 0f, x);
-        x += offset;
+        if (startLoop)
+        {
+            holder.transform.position = new Vector3(0f, 0f, x);
+            x += offset;
+        }
+        else
+        {
+            holder.transform.position = GetFloorPosition();
+            holder.transform.rotation = GetFloorRotation();
+        }
+        
+        
+
         floorSpawners.Enqueue(holder);
     }
-    //OOP THIS LATER FINISH GAME FIRST TODAY YOU RETARD
-    public void MoveFloor()
+    public Vector3 GetFloorPosition()
     {
         
-        var floorToMove = floorSpawners.Dequeue();
         //Use LINQ to access Last element in the queue 
         var positionToMove = floorSpawners.Last().transform.position;
-        floorToMove.transform.position = new Vector3(positionToMove.x ,positionToMove.y,positionToMove.z + 18f);
-        floorSpawners.Enqueue(floorToMove);
-        //get distance from player to trigger
-        //get Transform set transform.position at the back of the queue - could add to queue in reverse
-        //set floorToMove as set - offset
-        //move object to back of the queue
-        var spawner = floorToMove.GetComponent<Spawner>();
-        spawner.ReturnFloor();
-        spawner.SpawnFloor();
+        var target = new Vector3(positionToMove.x ,positionToMove.y,positionToMove.z + 18f);
+        return target;
+
+    }
+
+    public Quaternion GetFloorRotation()
+    {
+        var rotationToMove = floorSpawners.Last().transform.rotation;
+        return rotationToMove;
     }
 
     public void StopMoving()
@@ -124,23 +184,7 @@ public class ObjectSpawner : MonoBehaviour
             var _ = spawner.GetComponent<Spawner>();
         }
     }
-
-    private void IntroduceEmptyFloor()
-    {
-        
-    }
-    private void IntroduceCoins()
-    {
-        
-    }
-    private void IntroducePickups()
-    {
-        
-    }
-    private void IntroduceObstacles()
-    {
-        
-    }
+    
 
     
 }

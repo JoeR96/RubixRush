@@ -420,7 +420,7 @@ MeshRenderer:
   m_RendererPriority: 0
   m_Materials:
   - {fileID: 2100000, guid: c22777d6e868e4f2fb421913386b154e, type: 2}
-  - {fileID: 2100000, guid: c10d29a17331df2409a6cd61c93b1c55, type: 2}
+  - {fileID: 2100000, guid: 02daab90b8a689743b090753375c95e4, type: 2}
   - {fileID: 2100000, guid: 5750745f03afb554580e8db2a21cd1ee, type: 2}
   m_StaticBatchInfo:
     firstSubMesh: 0
@@ -462,8 +462,8 @@ BoxCollider:
   m_IsTrigger: 1
   m_Enabled: 1
   serializedVersion: 2
-  m_Size: {x: 2.432416, y: 5.3364577, z: 1.0895048}
-  m_Center: {x: 1.5275683, y: 3.114296, z: -0.5447524}
+  m_Size: {x: 1.8398085, y: 4.970655, z: 0.2642043}
+  m_Center: {x: 1.4195085, y: 3.0155723, z: -0.13210206}
 --- !u!114 &3331270074490006539
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -473,10 +473,11 @@ MonoBehaviour:
   m_GameObject: {fileID: 9093292059065208922}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: aa065667310fbff4c94520d17f577307, type: 3}
+  m_Script: {fileID: 11500000, guid: 33274d538c3e4b444b4d691a393bc1e0, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
   PoolType: 0
+  state: 0
 --- !u!114 &4272048886195300025
 MonoBehaviour:
   m_ObjectHideFlags: 0

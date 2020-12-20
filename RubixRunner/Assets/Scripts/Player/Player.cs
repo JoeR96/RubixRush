@@ -6,17 +6,15 @@ using UnityEngine.SceneManagement;
 
 public class Player : MonoBehaviour
 {
-    public float MoveForce
-    {
-        get => moveForce;
-        set => moveForce = value;
-    }
+    ScoreSystem scoreSystem;
+    UiManager uiManager;
+    public float MoveForce { get; set; }
+
     
     private Animator animator;
     [SerializeField] private AnimationCurve animationCurve;
-
-    [SerializeField] private GameObject spawnGetter;
-    private ObjectSpawner masterSpawner;
+    
+    private GameManager masterSpawner;
 
     [SerializeField] private GameObject player;
     [SerializeField] private GameObject playerParent;
@@ -30,8 +28,8 @@ public class Player : MonoBehaviour
     private bool isRunning = false;
     private Camera mainCamera;
     private RotationManager rotationManager;
-    ScoreSystem scoreSystem;
-    UiManager uiManager;
+    
+   
     
     //pass these game objects through to the UI manager
     [SerializeField] private GameObject deathCanvas;
@@ -45,7 +43,7 @@ public class Player : MonoBehaviour
         mainCamera = Camera.main;
         animator = GetComponent<Animator>();
         rotationManager = GetComponent<RotationManager>();
-        masterSpawner = spawnGetter.GetComponent<ObjectSpawner>();
+        masterSpawner = GameObject.FindWithTag("GameManager").GetComponent<GameManager>();
         uiManager = uiOutput.GetComponent<UiManager>();
         scoreSystem = GetComponent<ScoreSystem>();
         AudioSource = GetComponent<AudioSource>();
@@ -54,6 +52,7 @@ public class Player : MonoBehaviour
     }
     // Update is called once per frame
 
+    private float distanceTravelled;
     void Update()
     {
         Move();
@@ -61,7 +60,6 @@ public class Player : MonoBehaviour
         {
             if (isRunning == false)
             {
-
                 StartCoroutine(RotatePlayerAndCamera());
             }
         }
@@ -206,10 +204,10 @@ public class Player : MonoBehaviour
     
     public void FloorDeathFunction()
     {
-        
         deathCanvas.SetActive(true);
         //Set game manager state to over
-        masterSpawner.StopMoving();
+        Debug.Log(masterSpawner);
+        //masterSpawner.SetGameOverState();
         //switch to our game over animation
         animator.SetTrigger(3);
         //camera sequence to show game over state 

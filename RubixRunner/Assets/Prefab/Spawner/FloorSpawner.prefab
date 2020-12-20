@@ -10299,8 +10299,8 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 8112624465032767703}
-  - component: {fileID: 8112624465032767700}
   - component: {fileID: 2006664267034036874}
+  - component: {fileID: 4518149386557718495}
   m_Layer: 0
   m_Name: FloorSpawner
   m_TagString: Untagged
@@ -10358,7 +10358,20 @@ Transform:
   m_Father: {fileID: 0}
   m_RootOrder: 0
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
---- !u!114 &8112624465032767700
+--- !u!65 &2006664267034036874
+BoxCollider:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 8112624465032767702}
+  m_Material: {fileID: 0}
+  m_IsTrigger: 1
+  m_Enabled: 1
+  serializedVersion: 2
+  m_Size: {x: 1, y: 1, z: 1.8246908}
+  m_Center: {x: 0, y: 0, z: 4.8322043}
+--- !u!114 &4518149386557718495
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -10367,12 +10380,10 @@ MonoBehaviour:
   m_GameObject: {fileID: 8112624465032767702}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 5cbf02a24ae98944f85f447d37aad551, type: 3}
+  m_Script: {fileID: 11500000, guid: b5f39e6910f37a14fa280511f5f638f1, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  Floor: {fileID: 2396740585914016386, guid: c3d9dea0081a6714d8f7a3f7a29ba74d, type: 3}
-  masterSpawner: {fileID: 0}
-  spawnPoints:
+  _spawnPoints:
   - {fileID: 8112624464844686830}
   - {fileID: 8112624465383567200}
   - {fileID: 8112624464825360758}
@@ -10409,19 +10420,6 @@ MonoBehaviour:
   - {fileID: 8112624463365858771}
   - {fileID: 8112624465122959228}
   - {fileID: 8112624464248260820}
---- !u!65 &2006664267034036874
-BoxCollider:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 8112624465032767702}
-  m_Material: {fileID: 0}
-  m_IsTrigger: 1
-  m_Enabled: 1
-  serializedVersion: 2
-  m_Size: {x: 1, y: 1, z: 1.8246908}
-  m_Center: {x: 0, y: 0, z: 4.8322043}
 --- !u!1 &8112624465122959228
 GameObject:
   m_ObjectHideFlags: 0

@@ -5,24 +5,22 @@ using UnityEngine;
 
 public enum PoolObjectType
 {
-    FLOORGREY,
-    BLUEFLOOR,
-    WHITEFLOOR,
-    REDFLOOR,
-    GREENFLOOR,
-    YELLOWFLOOR,
-    ORANGEFLOOR,
-    EMPTYFLAT,
-    FLOORMASTER,
-    PICKUPSLOWPLAYER,
-    PICKUPFASTPLAYER,
-    PICKUPSCORE,
-    OBSTACLE
+    BLUEFLOOR = 1,
+    WHITEFLOOR = 2,
+    REDFLOOR = 3,
+    GREENFLOOR = 4,
+    YELLOWFLOOR = 5,
+    ORANGEFLOOR = 6,
+    EMPTYFLAT = 0,
+    PICKUPSCORE = 7,
+    PICKUPSLOWPLAYER = 8,
+    PICKUPFASTPLAYER = 9,
+    OBSTACLE = 10,
 }
 [Serializable]
 public class PoolType
 {
-    public PoolObjectType type;
+    public PoolObjectType Type;
     public int AmountToPool;
     public GameObject PrefabToPool;
     public GameObject PoolHolder;
@@ -30,8 +28,6 @@ public class PoolType
 }
 public class ObjectPooler : Singleton<ObjectPooler>
 {
-    
-
     [Header("Pool Properties")]
     public static ObjectPooler Instance;
     //[Header("Pool Holders")]
@@ -48,7 +44,7 @@ public class ObjectPooler : Singleton<ObjectPooler>
             CreatePool(MasterPool[i]);
         }
     }
-    #region Object Pooler
+
 
     private static void CreatePool(PoolType type)
     {
@@ -63,7 +59,7 @@ public class ObjectPooler : Singleton<ObjectPooler>
     {
         for (int i = 0; i < MasterPool.Count; i++)
         {
-            if (type == MasterPool[i].type)
+            if (type == MasterPool[i].Type)
             {
                 return MasterPool[i];
             }
@@ -74,26 +70,34 @@ public class ObjectPooler : Singleton<ObjectPooler>
     {
         PoolType currentPool = GetPoolType(type);
         List<GameObject> pool = currentPool.ObjectPool;
-        GameObject returnObject = null;
+
         
         if(pool.Count > 0)
         {
-            returnObject = pool[pool.Count - 1];
+            var returnObject = pool[pool.Count - 1];
             returnObject.SetActive(true);
+            pool.Remove(returnObject);
+            return returnObject;
+
         }
         else
         {
-            returnObject = Instantiate(currentPool.PrefabToPool);
+            var returnObject = Instantiate(currentPool.PrefabToPool);
+            return returnObject;
         }
-        return returnObject;
+
     }
+    
     public void ReturnObject(GameObject obj,PoolObjectType type)
     {
-        obj.SetActive(false);
         PoolType poolList = GetPoolType(type);
         List<GameObject> pool = poolList.ObjectPool;
-        obj.transform.parent = poolList.PoolHolder.transform;
-        pool.Add(obj);
+
+        if (pool.Contains(obj) == false) 
+        {
+            obj.SetActive(false);
+            obj.transform.parent = poolList.PoolHolder.transform;
+            pool.Add(obj);
+        }
     }
-    #endregion
 }

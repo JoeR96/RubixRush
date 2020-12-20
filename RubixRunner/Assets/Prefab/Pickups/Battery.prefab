@@ -13,7 +13,6 @@ GameObject:
   - component: {fileID: 6409155546642687793}
   - component: {fileID: -9178128894263100976}
   - component: {fileID: 4132228996928832414}
-  - component: {fileID: -912694751532119305}
   m_Layer: 0
   m_Name: Battery
   m_TagString: Untagged
@@ -110,16 +109,3 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   clip: {fileID: 8300000, guid: 52670f6d4d7bb454aa9302e3673c148a, type: 3}
---- !u!114 &-912694751532119305
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 6387193758222125261}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: aa065667310fbff4c94520d17f577307, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  PoolType: 11

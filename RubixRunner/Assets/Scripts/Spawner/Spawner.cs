@@ -1,4 +1,5 @@
-﻿using System.Collections;
+﻿using System;
+using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
 using UnityEngine;
@@ -8,63 +9,60 @@ using Random = UnityEngine.Random;
 public class Spawner : MonoBehaviour
 {
 
-    [SerializeField]private GameObject spawn;
-
-    public bool SpawnEmpty = true;
-    public bool SpawnObstacles = false;
-    public bool SpawnPickups = false;
-    public bool SpawnCoins = false;
-    public bool SpawnBuff = false;
-    public bool SpawnDebuff = false;
-    public ObjectSpawner masterSpawner;
-    //seperate spawner
-    //seperate pickup
-    //lets use some nice OOP here
+    [SerializeField] ObjectSpawner _masterSpawner;
+    [SerializeField] private DataScriptableObject _data;
+    [SerializeField] private GameObject _spawn;
+    [SerializeField] private List<GameObject> _spawnPoints = new List<GameObject>();
+    private List<GameObject> _pooledObjects = new List<GameObject>();
+    private float _distanceTravelled;
+    
+    //do we want these or can we do it another way?//inheritance/case?
+    private bool SpawnEmpty = false;
+    private static bool SpawnPickups = false;
+    private bool SuperSpawn = false;
+    private bool dynamicTutorial;
+    private bool floorDynamic;
+    
+    //timer - return percentage complete as empty spawning chance - this will remove the array/pointer
+    private float[] emptyChance = new float [4] {0.25f, 0.5f, 0.75f, 1f};
+    private int floorPointer = 0;
+    private float floorTimer = 15f;
+    
+    private float gameTimer = 4f;
+    
     public float moveSpeed = 0.15f;
-    public bool SuperSpawn = false;
+    
 
+    public float distanceTravelled { get; private set; }
     float colourDuration;
     private float colourTimer;
 
+    
+    //look to change/increment with timer
     public int gameIncrementer = 9;
     
-    public int moveCount { get; set; }
-    [SerializeField] private List<GameObject> spawnPoints = new List<GameObject>();
-
+    
     private void Awake()
     {
-        SuperSpawn = false;
-        floorDynamic = true;
-        SpawnPickups = true;
+        dynamicTutorial = _data.GetTutorialMode();
+        floorDynamic = false;
+        SpawnPickups = false;
         SpawnEmpty = false;
         //dynamic tutorial variables
-        spawn = GameObject.FindGameObjectWithTag("GameManager");
-        masterSpawner = spawn.GetComponent<ObjectSpawner>();
-        
+        _spawn = GameObject.FindGameObjectWithTag("GameManager");
+        _masterSpawner = _spawn.GetComponent<ObjectSpawner>();
     }
     private void OnEnable()
     {
         SpawnFloor();
+        Debug.Log(dynamicTutorial);
     }
-
-    private bool floorDynamic;
-    private float[] emptyChance = new float [4] {0.25f, 0.5f, 0.75f, 1f};
-    private int floorPointer = 0;
-    private float floorTimer = 15f;
-    private float gameTimer = 4f;
-    private bool dynamicTutorial;
     private void Update()
     {
-
         transform.Translate(new Vector3(0f, 0f, -1f) * moveSpeed);
-        if (!dynamicTutorial)
+        if (dynamicTutorial)
         {
-            DynamicalTutorialTimer();
-        }
-
-        if (Input.GetKey(KeyCode.J))
-        {
-            SuperSpawn = true;
+            DynamicalTutorialTimer(); 
         }
     }
 
@@ -79,12 +77,17 @@ public class Spawner : MonoBehaviour
         
             if (gameTimer <= 0)
             {
+                
                 gameIncrementer++;
-                Debug.Log(gameIncrementer);
+                //Debug.Log(gameIncrementer);
                 gameTimer = 3f;
             }
-        
-            if (gameIncrementer == 13)
+
+            if (gameIncrementer == 11)
+            {
+                SpawnPickups = true;
+            }
+            if (gameIncrementer == 15)
             {
                 SpawnEmpty = true;
             }
@@ -100,46 +103,113 @@ public class Spawner : MonoBehaviour
             {
                 if (floorPointer < 3)
                 {
-                    Debug.Log(floorPointer);
                     floorPointer++;
                 }
                 else
                 {
-                    Debug.Log(floorPointer);
-                    Debug.Log("Should be 3");
                     floorDynamic = false;
                 }
             }
         }
     }
 
-    private GameObject GetFloor()
+    
+
+    
+ 
+    //can probably override this method one day after TD
+    public void SpawnFloor()
     {
-        PoolObjectType  type;
+        foreach (var spawnPoint in _spawnPoints)
+        {
+
+            var floor = GetFloor();
+            var targetLocation = spawnPoint.transform;
+            floor.transform.SetParent(targetLocation);
+            SetFloorPosition(spawnPoint.transform, floor);
+            
+             
+             if (dynamicTutorial)
+             {
+                 if (SpawnPickups && Random.value < 0.5f)
+                 {
+                     Debug.Log("This should happen");
+                     var toSet = GetDynamicPickUp();
+                     SetDynamicPickUp(toSet, spawnPoint);
+                 }
+             }
+             
+             else if (Random.value < 0.1f)
+             {
+                 var toSet = GetPickup();
+                 SetPickUp(toSet,spawnPoint);
+             }
+             
+             if(SuperSpawn)
+             {
+             
+                 var toSet = GetCoinPickup();
+                 SetPickUp(toSet,spawnPoint);
+             }
+            
+        } 
+    }
+    
+    public void ReturnFloor()
+    {
+        foreach (var floor in _pooledObjects)
+        {
+            ObjectPooler.instance.ReturnObject(floor,floor.GetComponent<FloorType>().PoolType);
+        }
+    }
+    
+    
+
+    #region GetPiece
+
+    private void SpawnPickup(Transform spawnPoint)
+    {
+        
+        var pickUp = GetPickup();
+        SetPickupPosition(spawnPoint.transform,pickUp);
+        pickUp.transform.SetParent(spawnPoint.transform);
+    }
+    private GameObject GetFloor()
+    { 
+        PoolObjectType type = (PoolObjectType) Random.Range(0, 7);
+        
         if (SpawnEmpty)
         {
-            
             //spawn floor less often
-            type = (PoolObjectType) Random.Range(0,6 );
+            type = (PoolObjectType) Random.Range(0,5 );
             if (type == 0)
             {
                 if(Random. value > emptyChance[floorPointer]) //%80 percent chance.
                 {
-                    type = (PoolObjectType) Random.Range(1,6);
+                    type = (PoolObjectType) Random.Range(1,5);
                 }
             }
         }
         else
         {
-            type = (PoolObjectType) Random.Range(1,6 );
+            type = (PoolObjectType) Random.Range(0,6 ); 
+            
         }
         var floorToReturn = ObjectPooler.instance.GetObject(type);
+        _pooledObjects.Add(floorToReturn);
         return floorToReturn;
     }
 
+    private GameObject GetFloorEmpty()
+    {
+        PoolObjectType type = (PoolObjectType) Random.Range(0,6);
+        var floorToReturn = ObjectPooler.instance.GetObject(type);
+        return floorToReturn;
+    }
+    
     private GameObject GetFloorSuperSpawn()
     {
-        PoolObjectType type = (PoolObjectType) masterSpawner.MoveCount;
+        PoolObjectType type = (PoolObjectType) _masterSpawner.MoveCount;
         var floorToReturn = ObjectPooler.instance.GetObject(type);
         return floorToReturn;
     }
@@ -147,7 +217,7 @@ public class Spawner : MonoBehaviour
     //Object pool returners
     private GameObject GetPickup()
     {
-        var type = (PoolObjectType) Random.Range(8,11);
+        var type = (PoolObjectType) Random.Range(9,11);
         var toReturn = ObjectPooler.Instance.GetObject(type);
         return toReturn;
     }
@@ -176,52 +246,30 @@ public class Spawner : MonoBehaviour
         var toReturn = ObjectPooler.Instance.GetObject(PoolObjectType.OBSTACLE);
         return toReturn;
     }
-    
-    private GameObject GetFloorEmpty()
+    private GameObject GetDynamicPickUp()
     {
-        PoolObjectType type = (PoolObjectType) Random.Range(0,6);
-        var floorToReturn = ObjectPooler.instance.GetObject(type);
-        return floorToReturn;
+        var type = (PoolObjectType) (Random.Range(9, gameIncrementer));
+        var pickup = ObjectPooler.Instance.GetObject(type);
+        return pickup;
     }
-    
-    public void SpawnFloor()
+    private void SetDynamicPickUp(GameObject pickup,GameObject parent)
     {
-        
-        //change this from a foreach loop
-        foreach (var spawnPoint in spawnPoints)
-        {
-            GameObject floor;
-            floor = SuperSpawn ? GetFloorSuperSpawn() : GetFloor();
-            
-
-            var targetLocation = spawnPoint.transform;
-            SetFloorPosition(spawnPoint.transform, floor);
-            floor.transform.SetParent(targetLocation);
-
-            //pickup logic
-            var random = Random.Range(0, 10);
-            if (SpawnPickups)
-            {
-                
-                if (random == 2)
-                {
-                    var type = (PoolObjectType) (Random.Range(9, gameIncrementer));
-                    Debug.Log(type);
-                    targetLocation = spawnPoint.transform.GetChild(0).transform;
-                    var pickup = ObjectPooler.Instance.GetObject(type);
-                    pickup.transform.parent = spawnPoint.transform.GetChild(0);
-                    pickup.transform.position = targetLocation.transform.position;
-                    pickup.transform.rotation = targetLocation.transform.rotation;
-                }
-            }
-            
-
-        } 
+        var targetLocation = parent.transform.GetChild(0).transform;
+        pickup.transform.parent = parent.transform.GetChild(0);
+        pickup.transform.position = targetLocation.transform.position;
+        pickup.transform.rotation = targetLocation.transform.rotation;
     }
-
+    public void SetPickUp(GameObject pickup,GameObject parent)
+    {
+        var targetLocation = parent.transform.GetChild(0).transform;
+        pickup.transform.parent = parent.transform.GetChild(0);
+        pickup.transform.position = targetLocation.transform.position;
+        pickup.transform.rotation = targetLocation.transform.rotation;
+    }
     private static void SetFloorPosition(Transform target, GameObject toPosition)
     {
         var transform1 = target.transform;
+        toPosition.transform.parent = transform1;
         toPosition.transform.position = transform1.position;
         toPosition.transform.rotation = transform1.rotation;
     }
@@ -232,37 +280,9 @@ public class Spawner : MonoBehaviour
         toPosition.transform.position = transform1.position;
         toPosition.transform.rotation = transform1.rotation;
     }
-
-
-
-    public void ReturnFloor()
-    {
-
-            foreach (var _ in spawnPoints.Select(spawnPoint => spawnPoint.transform.GetChild(1)))
-            {
-                var type = _.gameObject.GetComponent<Type>().PoolType;
-                //ObjectPooler.instance.ReturnObject(_.gameObject, type);
-                //fixbug with object pooler
-                Destroy(_.gameObject);
-            }
-
-    }
-
-    private void OnCollisionEnter(Collision other)
-    {
-        if (other.gameObject.CompareTag("EndOfLine"))
-        {
-            masterSpawner.MoveFloor();
-        }
-    }
-
-    private void OnTriggerEnter(Collider other)
-    {
-        if(other.gameObject.CompareTag("EndOfLine"))
-        {
-            masterSpawner.MoveFloor();
-        }
-    }
+    #endregion
+    
+    #region GameEffects
 
     public void StopMoving()
     {
@@ -273,13 +293,7 @@ public class Spawner : MonoBehaviour
     {
         moveSpeed = 0.15f;
     }
-    private void SpawnPickup(Transform spawnPoint)
-    {
-        
-            var pickUp = GetPickup();
-            SetPickupPosition(spawnPoint.transform,pickUp);
-            pickUp.transform.SetParent(spawnPoint.transform);
-    }
+    
 
     public void SlowDownMovement()
     {
@@ -301,6 +315,21 @@ public class Spawner : MonoBehaviour
         //Timer
         //Add One
         //Go Again
+    }
+
+    #endregion
+    //TO DEAL WITH
+    
+    private void OnTriggerEnter(Collider other)
+    {
+        if(other.gameObject.CompareTag("EndOfLine"))
+        {
+            ReturnFloor();
+            Destroy(gameObject);
+            _masterSpawner.SpawnHolder();
+            
+            
+        }
     }
     
     //can this go in a parent?
