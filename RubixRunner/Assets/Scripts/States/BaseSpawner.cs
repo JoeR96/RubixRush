@@ -4,16 +4,16 @@ using UnityEngine;
 
 public abstract class BaseSpawner : MonoBehaviour
 {
-    protected GameManager _gameManager;
+    protected Manager _gameManager;
     [SerializeField] protected List<GameObject> _spawnPoints = new List<GameObject>();
     protected List<GameObject> _pooledObjects = new List<GameObject>();
     public float MoveSpeed { get; set; }
-
+    private float beforePauseSpeed;
 
     protected void Awake()
     {
-        MoveSpeed = 0.2f;
-        _gameManager = GameObject.FindWithTag("GameManager").GetComponent<GameManager>();
+        MoveSpeed = 15f;
+        _gameManager = GameObject.FindWithTag("GameManager").GetComponent<Manager>();
     }
 
     protected virtual void OnEnable()
@@ -30,13 +30,15 @@ public abstract class BaseSpawner : MonoBehaviour
     
     protected void Move()
     {
-        transform.Translate(new Vector3(0f, 0f, -1f) * MoveSpeed);
+        transform.Translate(new Vector3(0f, 0f, -1f)  * Time.deltaTime * MoveSpeed);
     }
 
     public void Stop()
     {
+        Debug.Log("Hi");
         MoveSpeed = 0;
     }
+    
     public void SlowDown()
     {
         MoveSpeed = 0.075f;
@@ -44,6 +46,11 @@ public abstract class BaseSpawner : MonoBehaviour
     public void SpeedUp()
     {
         MoveSpeed = 0.6f;
+    }
+
+    protected virtual void SetObject()
+    {
+        
     }
     protected virtual void SpawnFloor()
     {
@@ -92,6 +99,14 @@ public abstract class BaseSpawner : MonoBehaviour
         return floorToReturn;
     }
     
+    protected void SetPickup(GameObject pickup,GameObject parent)
+    {
+        var targetLocation = parent.transform.GetChild(0).transform;
+        pickup.transform.parent = parent.transform.GetChild(0);
+        pickup.transform.position = targetLocation.transform.position;
+        pickup.transform.rotation = targetLocation.transform.rotation;
+    }
+    
     protected void ReturnFloor()
     {
         foreach (var floor in _pooledObjects)
@@ -100,52 +115,21 @@ public abstract class BaseSpawner : MonoBehaviour
         }
     }
     //end of floor
-    
-    //interactive items
 
-    #region pickups
-    
-    protected void SetObject(GameObject pickup,GameObject parent)
-    {
-        var targetLocation = parent.transform.GetChild(0).transform;
-        pickup.transform.parent = parent.transform.GetChild(0);
-        pickup.transform.position = targetLocation.transform.position;
-        pickup.transform.rotation = targetLocation.transform.rotation;
-    }
-    
-    protected GameObject GetCoin()
-    {
-        var toReturn = ObjectPooler.Instance.GetObject(PoolObjectType.PICKUPSCORE);
-        return toReturn;
-    }
-
-    private GameObject GetBuff()
-    {
-        var toReturn = ObjectPooler.Instance.GetObject(PoolObjectType.PICKUPFASTPLAYER);
-        return toReturn;
-    }
-
-    private GameObject GetDebuff()
-    {
-        var toReturn = ObjectPooler.Instance.GetObject(PoolObjectType.PICKUPSLOWPLAYER);
-        return toReturn;
-    }
-
-    private GameObject GetObstacle()
-    {
-        var toReturn = ObjectPooler.Instance.GetObject(PoolObjectType.OBSTACLE);
-        return toReturn;
-    }
-    
     protected void OnTriggerEnter(Collider other)
     {
-        if(other.gameObject.CompareTag("EndOfLine"))
+        if (other.gameObject.CompareTag("EndOfLine"))
         {
-            ReturnFloor();
             _gameManager.SpawnFloorHolder();
-            Destroy(gameObject);
+            ReturnFloor();
+            var t = Random.Range(1, 40);
+            if (t == 1)
+            {
+                _gameManager.SetSuperSpawnState();
+            }
         }
+        
     }
-    #endregion
-   
+    //interactive items
+
 }

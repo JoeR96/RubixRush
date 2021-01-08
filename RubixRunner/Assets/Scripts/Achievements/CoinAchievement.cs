@@ -2,17 +2,15 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-public class CoinAchievement : MonoBehaviour
+public class CoinAchievement : AchievementManager
 {
-    // Start is called before the first frame update
-    void Start()
+    public CoinAchievement()
     {
-        
+        target = 1000f;
     }
 
-    // Update is called once per frame
-    void Update()
+    private void Awake()
     {
-        
+        value = _data.CoinsCollected;
     }
 }

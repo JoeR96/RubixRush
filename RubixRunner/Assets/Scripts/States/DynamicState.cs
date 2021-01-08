@@ -1,20 +1,25 @@
 ﻿using System;
 using System.Collections;
 using System.Collections.Generic;
+using Microsoft.Unity.VisualStudio.Editor;
 using UnityEngine;
+using Image = UnityEngine.UI.Image;
 using Random = UnityEngine.Random;
 
 public class DynamicState : BaseSpawner
 {
+
+    
     public static int GameIncrementer = 7;
     private float _gameTimer = 4f;
-    private int _durationBetweenIncrease = 4;
+    private int _durationBetweenIncrease = 7;
     private static bool _isIncrementing;
     private static bool _spawnEmpty { get; set; }
     
     // Start is called before the first frame update
     private void Start()
     {
+        _spawnEmpty = false;
         _isIncrementing = true;
     }
     
@@ -42,7 +47,7 @@ public class DynamicState : BaseSpawner
             if (Random.value < 0.05f)
             {
                 var toSet = GetDynamicPickUp();
-                SetDynamicPickUp(toSet,spawnPoint);
+                SetPickup(toSet,spawnPoint);
             }
         }
     }
@@ -51,19 +56,10 @@ public class DynamicState : BaseSpawner
 
     private GameObject GetDynamicPickUp()
     {
-        var type = (PoolObjectType) (Random.Range(7, GameIncrementer));
-
-        var pickup = ObjectPooler.Instance.GetObject(type);
+        var pickup = ObjectPooler.Instance.GetObject(PoolObjectType.PICKUPSCORE);
         return pickup;
     }
     
-    private void SetDynamicPickUp(GameObject pickup,GameObject parent)
-    {
-        var targetLocation = parent.transform.GetChild(0).transform;
-        pickup.transform.parent = parent.transform.GetChild(0);
-        pickup.transform.position = targetLocation.transform.position;
-        pickup.transform.rotation = targetLocation.transform.rotation;
-    }
 
     private void FloorTimer()
     {
@@ -86,9 +82,10 @@ public class DynamicState : BaseSpawner
                 _gameTimer -= Time.deltaTime;
             }
         
-            if (GameIncrementer == 10)
+            if (GameIncrementer == 8)
             {
                 _isIncrementing = false;
+                _gameManager.SetSuperSpawnState();
                 return;
             }
             
@@ -97,4 +94,6 @@ public class DynamicState : BaseSpawner
             _gameTimer = _durationBetweenIncrease;
         }
     }
+
+
 }

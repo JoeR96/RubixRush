@@ -1,0 +1,18 @@
+fileFormatVersion: 2
+guid: 35e4944d06abf414b864c540c2b10f8b
+MonoImporter:
+  externalObjects: {}
+  serializedVersion: 2
+  defaultReferences:
+  - bigCubePrefab: {fileID: 114511987599788914, guid: 0b9f75a41a5112342b5eea40fb078893,
+      type: 3}
+  - winMessage: {instanceID: 0}
+  - settings: {instanceID: 0}
+  - backgroundImage: {instanceID: 0}
+  - timer: {instanceID: 0}
+  - backToGame: {instanceID: 0}
+  executionOrder: 0
+  icon: {instanceID: 0}
+  userData: 
+  assetBundleName: 
+  assetBundleVariant: 

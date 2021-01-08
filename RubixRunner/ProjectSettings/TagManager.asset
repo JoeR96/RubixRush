@@ -13,6 +13,9 @@ TagManager:
   - MasterSpawner
   - UI
   - GameManager
+  - ShopPlayer
+  - SkinHolder
+  - SuperState
   layers:
   - Default
   - TransparentFX

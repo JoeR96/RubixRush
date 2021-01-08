@@ -7518,8 +7518,8 @@ BoxCollider:
   m_IsTrigger: 1
   m_Enabled: 1
   serializedVersion: 2
-  m_Size: {x: 1, y: 1, z: 1.8246908}
-  m_Center: {x: 0, y: 0, z: 4.8322043}
+  m_Size: {x: 18, y: 18, z: 18}
+  m_Center: {x: 0, y: 0, z: 0}
 --- !u!114 &6596928419334816973
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -7569,6 +7569,8 @@ MonoBehaviour:
   - {fileID: 3064579734616259773}
   - {fileID: 3064579735283910162}
   - {fileID: 3064579734539080122}
+  distanceButton: {fileID: 0}
+  distanceText: {fileID: 0}
 --- !u!1 &3064579735387223948
 GameObject:
   m_ObjectHideFlags: 0

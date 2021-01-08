@@ -12,3 +12,14 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 0db558aca9c4d4b499ada023394787ce, type: 3}
   m_Name: Data
   m_EditorClassIdentifier: 
+  IsInitalised: 0
+  tutorialMode: 1
+  ScoreCount: 1
+  Player:
+  - {fileID: 7223016347994558439, guid: ac2e6db96fb515c4c8507c6d899b3b8f, type: 3}
+  - {fileID: 5365748371096875677, guid: 796944040304bad4c92c56595da2a1b6, type: 3}
+  - {fileID: 3199058584653767586, guid: 76ee436cbde0b704bbc113791c611bfa, type: 3}
+  - {fileID: 3736368168016073487, guid: e800b120259a7c24b84f6356665415e9, type: 3}
+  CoinsCollected: 1
+  Distancetravelled: 64
+  _activeSkin: {fileID: 5365748371096875677, guid: 796944040304bad4c92c56595da2a1b6, type: 3}

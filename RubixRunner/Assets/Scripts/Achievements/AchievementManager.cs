@@ -1,10 +1,12 @@
-﻿using UnityEngine;
+﻿using TMPro;
+using UnityEngine;
 using UnityEngine.UI;
 
 public abstract class AchievementManager : MonoBehaviour
 {
     [SerializeField] protected DataScriptableObject _data;
     [SerializeField] protected Slider progress;
+    [SerializeField] protected TextMeshProUGUI progressText;
     protected float target;
     protected float value;
 
@@ -14,7 +16,12 @@ public abstract class AchievementManager : MonoBehaviour
     }
     protected virtual void SetProgressSlider()
     {
-        progress.value = value / target * 100;
+        progress.value = value / target;
+    }
+
+    protected virtual void SetProgressText()
+    {
+        progressText.SetText(value.ToString());
     }
     
 }

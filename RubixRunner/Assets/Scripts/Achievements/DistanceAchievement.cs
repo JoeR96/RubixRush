@@ -2,17 +2,16 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-public class DistanceAchievement : MonoBehaviour
+public class DistanceAchievement : AchievementManager
 {
-    // Start is called before the first frame update
-    void Start()
+    public DistanceAchievement()
     {
+        target = 1000f;
         
     }
 
-    // Update is called once per frame
-    void Update()
+    private void Awake()
     {
-        
+        value = _data.Distancetravelled;
     }
 }

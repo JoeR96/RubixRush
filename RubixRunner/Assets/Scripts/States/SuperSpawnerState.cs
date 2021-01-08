@@ -4,7 +4,7 @@ using System.Collections.Generic;
 using TMPro;
 using UnityEngine;
 using UnityEngine.UI;
-
+using Random = UnityEngine.Random;
 public class SuperSpawnerState : BaseSpawner
 {
     private static int _superSpawnFloor = 1;
@@ -26,12 +26,7 @@ public class SuperSpawnerState : BaseSpawner
     void Update()
     {
         base.Update();
-        IncrementSuperSpawn();
-        if (Input.GetKey(KeyCode.K))
-        {
-            Debug.Log(_superSpawnFloor);
-        }
-            
+        
     }
 
     protected override void SpawnFloor()
@@ -49,24 +44,33 @@ public class SuperSpawnerState : BaseSpawner
             //transition back to normal
             _gameManager.SetDefaultState();
         }
+        
         PoolObjectType type = (PoolObjectType) (_index);
         foreach (var spawnPoint in _spawnPoints)
         {
+            Debug.Log(type);
             var superFloor = ObjectPooler.instance.GetObject(type);
             var targetLocation = spawnPoint.transform;
             superFloor.transform.SetParent(targetLocation);
             SetFloorPosition(spawnPoint.transform, superFloor);
-            var coin = GetCoin();
-            SetObject(coin,spawnPoint);
+            
+            if (Random.value < 0.25f)
+            {
+                var coin = GetCoin();
+                SetPickup(coin,spawnPoint);
+            }
+            
+            
         }
     }
 
-    private void IncrementSuperSpawn()
+    private GameObject GetCoin()
     {
-
+        var coin = ObjectPooler.instance.GetObject(PoolObjectType.PICKUPSCORE);
+        return coin;
     }
-    
 
+ 
     
     public bool IsDivisible(float x,float y)
     {

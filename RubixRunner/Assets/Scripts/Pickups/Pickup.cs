@@ -43,9 +43,10 @@ public abstract class Pickup : MonoBehaviour
     {
         if (other.CompareTag("Player"))
         {
-            player.PlayAudio(clip);
+            AudioManager.Instance.PlaySound("Pickup");
+            
             ApplyEffect();
-            StartCoroutine(LerpGameObjectPosition(gameObject, player.transform.position, 5f));
+            StartCoroutine(LerpGameObjectPosition(gameObject, player.transform.position, 1f));
             ScoreFunction();
         }
         if (other.gameObject.CompareTag("EndOfLine"))
@@ -63,7 +64,7 @@ public abstract class Pickup : MonoBehaviour
 
  
 
-    public IEnumerator LerpGameObjectPosition(GameObject toLerp, Vector3 target, float rate)
+    public IEnumerator LerpGameObjectPosition(GameObject toLerp, Vector3 targetTransform, float rate)
     {
         float time = 1f;
         float i = 0;
@@ -72,7 +73,7 @@ public abstract class Pickup : MonoBehaviour
         while (i < 1)
         { 
             i += Time.deltaTime * rate;
-            toLerp.transform.position = Vector3.Lerp(start, target, i);
+            toLerp.transform.position = Vector3.Lerp(start, targetTransform, i);
             //transform.rotation = Quaternion.RotateTowards(start, target, i);
             yield return null;
         }
